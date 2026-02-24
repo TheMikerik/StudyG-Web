@@ -93,23 +93,16 @@ create policy "Public read" on posts
 
 ### Steps
 
-- [ ] 3.1 Build `PostCard` component (title, excerpt, date, category badge)
-- [ ] 3.2 Build homepage with hero section + 6 latest posts
-- [ ] 3.3 Build `/blog` listing page with pagination (10 posts/page)
-- [ ] 3.4 Build `/blog/[slug]` — render markdown content
-  - Install `react-markdown` + `rehype-highlight` for code blocks
-  ```bash
-  npm install react-markdown rehype-highlight highlight.js
-  ```
-- [ ] 3.5 Add category filter page
-- [ ] 3.6 Add `<head>` metadata (title, description, og:image) for SEO
-  - Use Next.js `generateMetadata` in each page
-- [ ] 3.7 Add sitemap: `app/sitemap.ts` (Next.js built-in)
-- [ ] 3.8 Add robots.txt: `app/robots.ts`
-- [ ] 3.9 Style with Tailwind — typography plugin for article body
-  ```bash
-  npm install @tailwindcss/typography
-  ```
+- [x] 3.1 Build `PostCard` component (title, excerpt, date, category badge)
+- [x] 3.2 Build homepage — hero + 6 latest posts + CTA banner
+- [x] 3.3 Build `/blog` listing page with pagination (9 posts/page)
+- [x] 3.4 Build `/blog/[slug]` — markdown via react-markdown + rehype-highlight + remark-gfm
+- [x] 3.5 Add `/blog/category/[cat]` filter page
+- [x] 3.6 `generateMetadata` on all pages (title, description, OG, Twitter card)
+- [x] 3.7 Sitemap at `src/app/sitemap.ts`
+- [x] 3.8 Robots.txt at `src/app/robots.ts`
+- [x] 3.9 Tailwind typography plugin for article body
+- [x] 3.10 Mock data (6 sample posts) — site fully works without Supabase in dev
 
 **Deliverable:** Full blog UI reading from Supabase, SEO metadata, sitemap
 
