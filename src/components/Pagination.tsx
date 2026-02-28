@@ -16,11 +16,11 @@ export default function Pagination({
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
-    <nav className="flex items-center justify-center gap-1.5 mt-14">
+    <nav className="flex items-center justify-center gap-1.5 mt-16">
       {currentPage > 1 && (
         <Link
           href={`${basePath}?page=${currentPage - 1}`}
-          className="px-4 py-2 rounded-lg border border-slate-200 text-sm text-slate-600 hover:border-violet-300 hover:text-violet-600 transition-colors"
+          className="px-4 py-2 rounded-lg border border-white/10 text-sm text-gray-400 hover:border-white/30 hover:text-white transition-all"
         >
           ← Prev
         </Link>
@@ -30,10 +30,10 @@ export default function Pagination({
         <Link
           key={page}
           href={`${basePath}?page=${page}`}
-          className={`w-9 h-9 flex items-center justify-center rounded-lg text-sm font-medium transition-colors ${
+          className={`w-9 h-9 flex items-center justify-center rounded-lg text-sm font-medium transition-all ${
             page === currentPage
-              ? "bg-violet-600 text-white"
-              : "border border-slate-200 text-slate-600 hover:border-violet-300 hover:text-violet-600"
+              ? "bg-white text-black font-bold"
+              : "border border-white/10 text-gray-400 hover:border-white/30 hover:text-white"
           }`}
         >
           {page}
@@ -43,7 +43,7 @@ export default function Pagination({
       {currentPage < totalPages && (
         <Link
           href={`${basePath}?page=${currentPage + 1}`}
-          className="px-4 py-2 rounded-lg border border-slate-200 text-sm text-slate-600 hover:border-violet-300 hover:text-violet-600 transition-colors"
+          className="px-4 py-2 rounded-lg border border-white/10 text-sm text-gray-400 hover:border-white/30 hover:text-white transition-all"
         >
           Next →
         </Link>

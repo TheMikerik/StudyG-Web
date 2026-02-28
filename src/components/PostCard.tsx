@@ -7,30 +7,31 @@ export default function PostCard({ post }: { post: PostPreview }) {
   const date = post.published_at ?? post.created_at;
 
   return (
-    <article className="group flex flex-col bg-white rounded-2xl border border-slate-200 hover:border-violet-200 hover:shadow-lg transition-all duration-200 overflow-hidden">
-      <div className="h-1 bg-gradient-to-r from-violet-500 to-purple-600" />
+    <article className="group card-gradient border border-white/5 rounded-3xl overflow-hidden glow-hover hover:border-white/20 transition-colors duration-300">
+      {/* Subtle top accent line */}
+      <div className="h-px bg-gradient-to-r from-white/20 via-white/5 to-transparent" />
 
-      <div className="flex flex-col flex-1 p-6">
-        <div className="flex items-center gap-2 mb-4">
+      <div className="p-8">
+        <div className="mb-4">
           {post.category && <CategoryBadge category={post.category} />}
         </div>
 
-        <Link href={`/blog/${post.slug}`} className="flex-1 group/link">
-          <h2 className="text-base font-semibold text-slate-900 group-hover/link:text-violet-700 transition-colors line-clamp-2 mb-2 leading-snug">
+        <Link href={`/blog/${post.slug}`}>
+          <h2 className="font-bold text-white text-lg leading-snug line-clamp-2 group-hover:text-gray-300 transition-colors mb-3">
             {post.title}
           </h2>
           {post.excerpt && (
-            <p className="text-sm text-slate-500 line-clamp-3 leading-relaxed">
+            <p className="text-gray-400 text-sm leading-relaxed line-clamp-3">
               {post.excerpt}
             </p>
           )}
         </Link>
 
-        <div className="flex items-center justify-between mt-5 pt-4 border-t border-slate-100">
-          <time className="text-xs text-slate-400">{formatDate(date)}</time>
+        <div className="flex items-center justify-between mt-6 pt-4 border-t border-white/5">
+          <time className="text-xs text-gray-600">{formatDate(date)}</time>
           <Link
             href={`/blog/${post.slug}`}
-            className="text-xs font-medium text-violet-600 hover:text-violet-800 transition-colors"
+            className="text-xs text-gray-500 hover:text-white transition-colors"
           >
             Read more →
           </Link>

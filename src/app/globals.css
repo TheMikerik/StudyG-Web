@@ -2,17 +2,62 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  body {
-    @apply text-slate-900 bg-white;
-  }
+body {
+  background-color: #050505;
+  color: #ffffff;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Remove scrollbar for horizontal category strips */
+/* Glassmorphism nav — matches original site */
+.glass-nav {
+  background: rgba(5, 5, 5, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* White-to-gray gradient text — matches original .text-gradient */
+.text-gradient {
+  background: linear-gradient(to right, #ffffff, #a3a3a3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Subtle card gradient — matches original .card-gradient */
+.card-gradient {
+  background: linear-gradient(145deg, #121212 0%, #0a0a0a 100%);
+}
+
+/* Glow on hover — matches original .glow-hover */
+.glow-hover {
+  transition: all 0.3s ease;
+}
+.glow-hover:hover {
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.05);
+  transform: translateY(-2px);
+}
+
+/* Hide scrollbar for category strips */
 .scrollbar-none {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
 .scrollbar-none::-webkit-scrollbar {
   display: none;
+}
+
+/* Styled scrollbar — matches original */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }

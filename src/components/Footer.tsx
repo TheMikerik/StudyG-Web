@@ -4,34 +4,64 @@ import { categoryToSlug } from "@/lib/utils";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-slate-200 bg-slate-50 mt-auto">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
-          {/* Brand */}
-          <div>
-            <div className="flex items-center gap-2.5 mb-3">
-              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center shrink-0">
+    <footer className="bg-[#050505] pt-20 pb-10 border-t border-white/5">
+      <div className="max-w-7xl mx-auto px-6">
+        {/* Big white CTA box — matches original site's footer download section */}
+        <div
+          className="bg-white text-black rounded-3xl p-12 md:p-20 text-center relative overflow-hidden mb-20"
+          id="download"
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-gray-100 to-white" />
+          <div className="absolute top-0 right-0 w-64 h-64 bg-gray-200 rounded-full mix-blend-multiply filter blur-3xl opacity-70" />
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-gray-300 rounded-full mix-blend-multiply filter blur-3xl opacity-70" />
+          <div className="relative z-10">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
+              Ready to study smarter?
+            </h2>
+            <p className="text-lg text-gray-600 mb-8 max-w-xl mx-auto">
+              Join thousands of students building better habits and learning
+              faster with StudyG.
+            </p>
+            <a
+              href="https://apps.apple.com/app/id6741184646?inviteCode=BFLMPSVZ4"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-3 bg-black text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-800 transition-transform transform hover:scale-105 shadow-xl"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
+              </svg>
+              Download on App Store
+            </a>
+          </div>
+        </div>
+
+        {/* Footer columns */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-16 border-b border-white/5 pb-16">
+          <div className="col-span-2 md:col-span-1">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center border border-white/10">
                 <span className="text-white text-xs font-bold">S</span>
               </div>
-              <span className="font-bold text-slate-900">StudyG Blog</span>
+              <span className="font-bold text-lg text-white">StudyG</span>
             </div>
-            <p className="text-sm text-slate-500 leading-relaxed">
-              Evidence-based study tips, memory science, and flashcard guides to
-              help you learn faster and remember more.
+            <p className="text-gray-500 text-sm leading-relaxed">
+              Focus better. Learn faster. The all-in-one productivity tool for
+              the modern student.
             </p>
           </div>
 
-          {/* Categories */}
           <div>
-            <h3 className="text-sm font-semibold text-slate-900 mb-3">
-              Categories
-            </h3>
-            <ul className="space-y-2">
-              {CATEGORIES.map((cat) => (
+            <h4 className="font-bold mb-4 text-white text-sm">Blog</h4>
+            <ul className="space-y-2 text-sm text-gray-500">
+              <li>
+                <Link href="/blog" className="hover:text-white transition-colors">All Posts</Link>
+              </li>
+              {CATEGORIES.slice(0, 3).map((cat) => (
                 <li key={cat}>
                   <Link
                     href={`/blog/category/${categoryToSlug(cat)}`}
-                    className="text-sm text-slate-500 hover:text-violet-600 transition-colors"
+                    className="hover:text-white transition-colors"
                   >
                     {cat}
                   </Link>
@@ -40,41 +70,43 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Quick Links */}
           <div>
-            <h3 className="text-sm font-semibold text-slate-900 mb-3">
-              Quick Links
-            </h3>
-            <ul className="space-y-2">
+            <h4 className="font-bold mb-4 text-white text-sm">Product</h4>
+            <ul className="space-y-2 text-sm text-gray-500">
               <li>
-                <Link
-                  href="/blog"
-                  className="text-sm text-slate-500 hover:text-violet-600 transition-colors"
-                >
-                  All Posts
-                </Link>
+                <a href="https://studyg.app" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                  StudyG App
+                </a>
               </li>
               <li>
-                <a
-                  href="https://studyg.app"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-slate-500 hover:text-violet-600 transition-colors"
-                >
-                  StudyG App
+                <a href="https://apps.apple.com/app/id6741184646?inviteCode=BFLMPSVZ4" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                  Download
                 </a>
               </li>
             </ul>
           </div>
+
+          <div>
+            <h4 className="font-bold mb-4 text-white text-sm">Social</h4>
+            <div className="flex gap-3">
+              <a
+                href="https://discord.gg/6p4nV8Yevg"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Discord"
+                className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all text-gray-400"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057.1 18.08.11 18.102.12 18.12a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
+                </svg>
+              </a>
+            </div>
+          </div>
         </div>
 
-        <div className="border-t border-slate-200 mt-8 pt-6 flex flex-col sm:flex-row justify-between items-center gap-3">
-          <p className="text-xs text-slate-400">
-            © {new Date().getFullYear()} StudyG. All rights reserved.
-          </p>
-          <p className="text-xs text-slate-400">
-            AI-powered content, daily updates.
-          </p>
+        <div className="flex flex-col md:flex-row justify-between items-center text-xs text-gray-600 gap-3">
+          <p>© {new Date().getFullYear()} StudyG. All rights reserved.</p>
+          <p>AI-generated content, daily updates.</p>
         </div>
       </div>
     </footer>

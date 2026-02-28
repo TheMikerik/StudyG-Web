@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyG | Master Your Focus</title>
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        obsidian: {
+                            950: '#050505',  /* Main Background */
+                            900: '#0a0a0a',  /* Section Background */
+                            800: '#121212',  /* Card Background */
+                            700: '#1e1e1e',  /* Border/Hover */
+                            600: '#2d2d2d',
+                        },
+                        accent: {
+                            DEFAULT: '#ffffff',
+                            dim: '#a3a3a3'
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Utilities */
+        body {
+            background-color: #050505;
+            color: #ffffff;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .glass-nav {
+            background: rgba(5, 5, 5, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .card-gradient {
+            background: linear-gradient(145deg, #121212 0%, #0a0a0a 100%);
+        }
+
+        .text-gradient {
+            background: linear-gradient(to right, #ffffff, #a3a3a3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .glow-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .glow-hover:hover {
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Hide scrollbar for clean look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050505; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555; 
+        }
+        
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <!-- Navigation -->
+    <header class="fixed w-full top-0 z-50 glass-nav transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <!-- Logo Area -->
+            <a href="index.html" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center overflow-hidden border border-white/10 group-hover:border-white/30 transition-colors p-1">
+                    <img src="assets/logo.png" alt="StudyG" class="w-6 h-6 object-cover" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fa-solid fa-layer-group text-white\'></i>'">
+                </div>
+                <span class="font-bold text-xl tracking-tight text-white">StudyG</span>
+            </a>
+
+            <!-- Desktop Menu -->
+            <nav class="hidden md:flex items-center gap-8">
+                <a href="index.html" class="text-sm font-medium text-white transition-colors">Home</a>
+                <a href="about.html" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">About</a>
+                <a href="privacy.html" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Privacy</a>
+                <a href="contact.html" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Contact</a>
+                <a href="https://apps.apple.com/app/id6741184646?inviteCode=BFLMPSVZ4" class="px-5 py-2.5 bg-white text-black text-sm font-bold rounded-full hover:bg-gray-200 transition-transform transform hover:scale-105">
+                    Download
+                </a>
+            </nav>
+
+            <!-- Mobile Menu Button -->
+            <button class="md:hidden text-white text-xl" onclick="toggleMobileMenu()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+        
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu" class="fixed inset-0 bg-obsidian-950/95 backdrop-blur-xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col items-center justify-center gap-8">
+            <button class="absolute top-6 right-6 text-2xl text-white" onclick="toggleMobileMenu()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <a href="index.html" class="text-2xl font-medium text-white" onclick="toggleMobileMenu()">Home</a>
+            <a href="about.html" class="text-2xl font-medium text-white" onclick="toggleMobileMenu()">About</a>
+            <a href="privacy.html" class="text-2xl font-medium text-white" onclick="toggleMobileMenu()">Privacy</a>
+            <a href="contact.html" class="text-2xl font-medium text-white" onclick="toggleMobileMenu()">Contact</a>
+            <a href="https://apps.apple.com/app/id6741184646?inviteCode=BFLMPSVZ4" class="text-2xl font-medium text-white" onclick="toggleMobileMenu()">Download</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+        <!-- Background decorative glows -->
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-white/5 blur-[120px] rounded-full pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center relative z-10">
+            <!-- Text Content -->
+            <div class="text-center lg:text-left animate-fade-in-up">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-gray-300 mb-6">
+                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    Now with AI Flashcards
+                </div>
+                <h1 class="text-5xl lg:text-7xl font-bold leading-tight mb-6">
+                    Focus Deeply.<br>
+                    <span class="text-gradient">Learn Faster.</span>
+                </h1>
+                <p class="text-lg text-gray-400 mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                    Transform your digital habits. Block distractions instantly and turn wasted screen time into effortless learning mastery with FSRS algorithms.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                    <a href="https://apps.apple.com/app/id6741184646?inviteCode=BFLMPSVZ4" class="flex items-center justify-center gap-3 bg-white text-black px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-all hover:-translate-y-1 shadow-[0_0_20px_rgba(255,255,255,0.15)]">
+                        <i class="fa-brands fa-apple text-xl"></i>
+                        <span>App Store</span>
+                    </a>
+                    <a href="#features" class="flex items-center justify-center gap-3 bg-white/5 text-white border border-white/10 px-8 py-4 rounded-xl font-bold text-lg hover:bg-white/10 transition-all">
+                        <span>Explore Features</span>
+                        <i class="fa-solid fa-arrow-right text-sm"></i>
+                    </a>
+                </div>
+                
+                <div class="mt-10 flex items-center justify-center lg:justify-start gap-4 text-sm text-gray-500">
+                    <div class="flex -space-x-2">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop&crop=face&auto=format" alt="Student avatar" class="w-8 h-8 rounded-full border-2 border-obsidian-950 object-cover">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face&auto=format" alt="Student avatar" class="w-8 h-8 rounded-full border-2 border-obsidian-950 object-cover">
+                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=32&h=32&fit=crop&crop=face&auto=format" alt="Student avatar" class="w-8 h-8 rounded-full border-2 border-obsidian-950 object-cover">
+                    </div>
+                    <p>Trusted by 10,000+ students</p>
+                </div>
+            </div>
+
+            <!-- Phone Image -->
+            <div class="relative lg:h-[800px] flex items-center justify-center animate-float hidden lg:flex">
+                <!-- Outer Glow -->
+                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-white/5 to-transparent blur-3xl opacity-30"></div>
+                
+                <!-- The Phone Asset -->
+                <img src="assets/index/hero/phones.png" alt="App Interface" class="relative z-10 max-w-[120%] h-auto object-contain drop-shadow-2xl" onerror="this.src='https://placehold.co/400x800/121212/FFFFFF/png?text=Phone+UI+Preview'; this.style.borderRadius='40px';">
+            </div>
+            
+            <!-- Mobile visual fallback if image missing or for smaller screens -->
+            <div class="lg:hidden mt-8 relative">
+                 <img src="assets/index/hero/phones.png" alt="App Interface" class="w-full max-w-sm mx-auto drop-shadow-2xl" onerror="this.style.display='none'">
+            </div>
+        </div>
+    </section>
+
+    <!-- Bento Grid Features -->
+    <section id="features" class="py-24 bg-obsidian-900 relative">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-3xl md:text-5xl font-bold mb-4">Engineered for <span class="text-white">Efficiency</span></h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">Everything you need to stop scrolling and start retaining information.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Large Card -->
+                <div class="md:col-span-2 bg-obsidian-800 border border-white/5 rounded-3xl p-8 md:p-12 relative overflow-hidden group hover:border-white/20 transition-all duration-500 reveal">
+                    <div class="relative z-10">
+                        <div class="w-14 h-14 bg-white text-black rounded-2xl flex items-center justify-center text-2xl mb-6">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <h3 class="text-3xl font-bold mb-4">Nuclear Distraction Blocking</h3>
+                        <p class="text-gray-400 text-lg max-w-md">Regain control. Define strict blocklists for social media and games. When you try to open them, we guide you back to focus.</p>
+                    </div>
+                    <!-- Decorative element replacing image asset -->
+                    <div class="absolute right-0 bottom-0 w-1/2 h-full bg-gradient-to-l from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <i class="fa-solid fa-ban absolute -bottom-10 -right-10 text-9xl text-white/5 rotate-12 group-hover:rotate-0 transition-transform duration-700"></i>
+                </div>
+
+                <!-- Tall Card -->
+                <div class="md:row-span-2 bg-obsidian-800 border border-white/5 rounded-3xl p-8 relative overflow-hidden group hover:border-white/20 transition-all duration-500 reveal">
+                     <div class="w-14 h-14 bg-obsidian-700 border border-white/10 text-white rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:bg-white group-hover:text-black transition-colors">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">AI-Powered<br>Creation</h3>
+                    <p class="text-gray-400 mb-8">Simply upload audio files, PDFs, or images and our AI will generate comprehensive flashcards for you automatically.</p>
+                    
+                    <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-obsidian-950 to-transparent"></div>
+                    <!-- CSS Art Representation of cards -->
+                    <div class="flex flex-col gap-3 mt-10 opacity-60 group-hover:opacity-100 transition-opacity">
+                        <div class="w-full h-16 bg-obsidian-700 rounded-xl border border-white/5 animate-pulse"></div>
+                        <div class="w-full h-16 bg-obsidian-700 rounded-xl border border-white/5 animate-pulse" style="animation-delay: 250ms;"></div>
+                        <div class="w-full h-16 bg-obsidian-700 rounded-xl border border-white/5 animate-pulse" style="animation-delay: 500ms;"></div>
+                    </div>
+                </div>
+
+                <!-- Small Card 1 -->
+                <div class="bg-obsidian-800 border border-white/5 rounded-3xl p-8 group hover:border-white/20 transition-all duration-500 reveal">
+                    <i class="fa-solid fa-clock-rotate-left text-3xl text-gray-300 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">FSRS Algorithm</h3>
+                    <p class="text-gray-400 text-sm">Optimized scheduling ensures you review cards at the perfect moment to prevent forgetting.</p>
+                </div>
+
+                <!-- Small Card 2 -->
+                <div class="bg-obsidian-800 border border-white/5 rounded-3xl p-8 group hover:border-white/20 transition-all duration-500 reveal">
+                    <i class="fa-solid fa-chart-pie text-3xl text-gray-300 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Detailed Stats</h3>
+                    <p class="text-gray-400 text-sm">Track your retention rates, study streaks, and time saved from blocked distractions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep Dive / Alternating Section -->
+    <section class="py-24 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col gap-32">
+            
+            <!-- Feature 1 -->
+            <div class="flex flex-col md:flex-row items-center gap-12 reveal">
+                <div class="w-full md:w-1/2 bg-gradient-to-br from-obsidian-800 to-obsidian-900 rounded-3xl h-[400px] border border-white/5 flex items-center justify-center relative overflow-hidden group">
+                     <!-- Abstract UI Representation -->
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <i class="fa-solid fa-hand-paper text-9xl text-white/5 group-hover:scale-110 transition-transform duration-700"></i>
+                    </div>
+                    <div class="w-64 h-80 bg-obsidian-950 border border-white/10 rounded-2xl shadow-2xl flex flex-col items-center justify-center gap-4 p-6 relative z-10 transform group-hover:-translate-y-2 transition-transform">
+                        <div class="w-16 h-16 bg-red-500/20 text-red-500 rounded-full flex items-center justify-center text-3xl mb-2">
+                            <i class="fa-brands fa-instagram"></i>
+                        </div>
+                        <h4 class="text-white font-bold text-lg">App Blocked</h4>
+                        <p class="text-center text-gray-500 text-xs">Start a study session to unblock the app</p>
+                        <button class="w-full py-2 bg-white/5 hover:bg-white/10 rounded-lg text-xs transition-colors">Study</button>
+                    </div>
+                </div>
+                <div class="w-full md:w-1/2">
+                    <h3 class="text-3xl font-bold mb-4">Stop doomscrolling.<br>Start living.</h3>
+                    <p class="text-gray-400 text-lg leading-relaxed mb-6">
+                        Custom app blocking lets you create personalized blocklists. We don't just block the app; we provide a moment of pause, allowing you to breathe and redirect your focus back to your goals.
+                    </p>
+                    <ul class="space-y-3 text-gray-300">
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-white"></i> Strict Mode available</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-white"></i> Schedule-based blocking</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-white"></i> Usage statistics</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="flex flex-col md:flex-row-reverse items-center gap-12 reveal">
+                <div class="w-full md:w-1/2 bg-gradient-to-bl from-obsidian-800 to-obsidian-900 rounded-3xl h-[400px] border border-white/5 flex items-center justify-center relative overflow-hidden group">
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <i class="fa-solid fa-wand-magic-sparkles text-9xl text-white/5 group-hover:scale-110 transition-transform duration-700"></i>
+                    </div>
+                    <div class="w-full max-w-sm p-6 relative z-10">
+                        <div class="bg-obsidian-950 border border-white/10 rounded-xl p-4 shadow-xl mb-4 transform translate-x-4">
+                            <div class="flex items-center gap-3 mb-2">
+                                <div class="w-2 h-2 rounded-full bg-white"></div>
+                                <span class="text-xs text-gray-400">Input</span>
+                            </div>
+                            <p class="text-sm">BiologyClass.pdf</p>
+                        </div>
+                        <div class="bg-white text-black border border-white/10 rounded-xl p-4 shadow-xl transform -translate-x-4 relative z-20">
+                            <div class="flex items-center gap-3 mb-2">
+                                <i class="fa-solid fa-bolt text-xs"></i>
+                                <span class="text-xs font-bold">Generated Card</span>
+                            </div>
+                            <p class="font-bold text-sm mb-1">What is the primary product of photosynthesis?</p>
+                            <p class="text-sm opacity-70">Glucose and Oxygen</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full md:w-1/2">
+                    <h3 class="text-3xl font-bold mb-4">Knowledge,<br>Generated instantly.</h3>
+                    <p class="text-gray-400 text-lg leading-relaxed mb-6">
+                        Don't waste time making cards. Our advanced AI analyzes your topic and creates high-quality, question-answer pairs tailored to your learning level.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="reviews" class="py-24 bg-obsidian-900">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-16 reveal">Impact Stories</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Review 1 -->
+                <div class="bg-obsidian-800 p-8 rounded-2xl border border-white/5 glow-hover reveal">
+                    <div class="flex text-white mb-4 text-xs gap-1">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-gray-300 mb-6 leading-relaxed">"This app has really helped me change how I use my time. The blocking feature keeps me focused, and the flashcards are a massive bonus."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-gray-700 to-gray-600 flex items-center justify-center font-bold">W</div>
+                        <div>
+                            <h4 class="font-bold text-sm">WaveCZ</h4>
+                            <p class="text-xs text-gray-500">Czechia</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 2 -->
+                <div class="bg-obsidian-800 p-8 rounded-2xl border border-white/5 glow-hover reveal" style="transition-delay: 100ms;">
+                    <div class="flex text-white mb-4 text-xs gap-1">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-gray-300 mb-6 leading-relaxed">"Game-Changer! The best app I’ve found to reduce distractions. After just one week, I’ve gotten so much done."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-white to-gray-300 text-black flex items-center justify-center font-bold">M</div>
+                        <div>
+                            <h4 class="font-bold text-sm">Muudys</h4>
+                            <p class="text-xs text-gray-500">United States</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 3 -->
+                <div class="bg-obsidian-800 p-8 rounded-2xl border border-white/5 glow-hover reveal" style="transition-delay: 200ms;">
+                    <div class="flex text-white mb-4 text-xs gap-1">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-gray-300 mb-6 leading-relaxed">"I love the breathing exercise feature. It turns every break into a productive one. Can’t wait for more updates."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-gray-700 to-gray-600 flex items-center justify-center font-bold">A</div>
+                        <div>
+                            <h4 class="font-bold text-sm">aaron_t</h4>
+                            <p class="text-xs text-gray-500">Australia</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA / Footer Area -->
+    <footer class="bg-obsidian-950 pt-20 pb-10 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-6">
+            
+            <!-- Large CTA -->
+            <div class="bg-white text-black rounded-3xl p-12 md:p-20 text-center relative overflow-hidden mb-20 group reveal" id="download">
+                <div class="absolute inset-0 bg-gradient-to-r from-gray-100 to-white"></div>
+                <!-- Decorative circles -->
+                <div class="absolute top-0 right-0 w-64 h-64 bg-gray-200 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
+                <div class="absolute bottom-0 left-0 w-64 h-64 bg-gray-300 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
+                
+                <div class="relative z-10">
+                    <h2 class="text-4xl md:text-6xl font-bold mb-6 tracking-tight">Ready to reclaim your time?</h2>
+                    <p class="text-lg md:text-xl text-gray-600 mb-10 max-w-2xl mx-auto">Join thousands of users building better habits and learning faster with StudyG.</p>
+                    <a href="https://apps.apple.com/app/id6741184646?inviteCode=BFLMPSVZ4" class="inline-flex items-center gap-3 bg-black text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-800 transition-transform transform hover:scale-105 shadow-xl">
+                        <i class="fa-brands fa-apple text-xl"></i>
+                        <span>Download on App Store</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-10 mb-16 border-b border-white/5 pb-16">
+                <div class="col-span-2 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-6">
+                         <div class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
+                             <img src="assets/logo.png" alt="Logo" class="w-4 h-4 object-cover rounded-lg" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fa-solid fa-layer-group text-white text-xs\'></i>'">
+                         </div>
+                        <span class="font-bold text-lg">StudyG</span>
+                    </div>
+                    <p class="text-gray-500 text-sm">Focus better. Learn faster. The all-in-one productivity tool for the modern student.</p>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4 text-white">Product</h4>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><a href="index.html#features" class="hover:text-white transition-colors">Features</a></li>
+                        <li><a href="index.html#download" class="hover:text-white transition-colors">Download</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold mb-4 text-white">Support</h4>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><a href="contact.html" class="hover:text-white transition-colors">Contact</a></li>
+                        <li><a href="privacy.html" class="hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li><a href="tos.html" class="hover:text-white transition-colors">Terms of Service</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold mb-4 text-white">Social</h4>
+                    <div class="flex gap-4">
+                        <a href="https://discord.gg/6p4nV8Yevg" class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-white hover:text-black transition-all">
+                            <i class="fa-brands fa-discord"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-between items-center text-xs text-gray-600">
+                <p>&copy; 2025 StudyG. All rights reserved.</p>
+                <div class="flex gap-4 mt-4 md:mt-0">
+                    <p>Designed with <i class="fa-solid fa-heart text-white mx-1"></i> for Focus</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Scroll Animation Logic
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 150;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        // Trigger once on load
+        reveal();
+
+        // Navbar Blur Effect on Scroll
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('shadow-lg');
+            } else {
+                navbar.classList.remove('shadow-lg');
+            }
+        });
+
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const isOpen = !menu.classList.contains('translate-x-full');
+            
+            if (isOpen) {
+                menu.classList.add('translate-x-full');
+            } else {
+                menu.classList.remove('translate-x-full');
+            }
+        }
+    </script>
+</body>
+</html>

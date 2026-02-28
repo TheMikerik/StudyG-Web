@@ -6,7 +6,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "All Posts — StudyG Blog",
+  title: "All Posts",
   description:
     "Browse all study tips, memory science articles, and flashcard guides on StudyG Blog.",
 };
@@ -30,26 +30,28 @@ export default async function BlogPage({
   const totalPages = Math.ceil(total / POSTS_PER_PAGE);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 mb-1">All Posts</h1>
-        <p className="text-slate-500">
+    <div className="max-w-7xl mx-auto px-6 pt-32 pb-24">
+      {/* Page header */}
+      <div className="mb-10">
+        <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">
+          All Posts
+        </h1>
+        <p className="text-gray-400">
           {total} article{total !== 1 ? "s" : ""} on studying, memory, and
           learning science
         </p>
       </div>
 
-      {/* Category tabs */}
-      <div className="flex gap-2 overflow-x-auto scrollbar-none mb-8 pb-1 border-b border-slate-200">
-        <span className="shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-violet-600 text-white">
+      {/* Category tabs — dark style matching original */}
+      <div className="flex gap-2 overflow-x-auto scrollbar-none mb-10 pb-1 border-b border-white/5">
+        <span className="shrink-0 px-4 py-2 rounded-full text-sm font-bold bg-white text-black">
           All
         </span>
         {CATEGORIES.map((cat) => (
           <Link
             key={cat}
             href={`/blog/category/${categoryToSlug(cat)}`}
-            className="shrink-0 px-4 py-2 rounded-full text-sm font-medium border border-slate-200 text-slate-600 hover:border-violet-300 hover:text-violet-600 transition-colors"
+            className="shrink-0 px-4 py-2 rounded-full text-sm font-medium border border-white/10 text-gray-400 hover:border-white/30 hover:text-white transition-all"
           >
             {cat}
           </Link>
@@ -58,7 +60,7 @@ export default async function BlogPage({
 
       {/* Posts grid */}
       {posts.length === 0 ? (
-        <div className="text-center py-20 text-slate-400">
+        <div className="text-center py-24 text-gray-600">
           <p className="text-lg font-medium">No posts yet.</p>
           <p className="text-sm mt-1">Check back soon.</p>
         </div>
@@ -70,11 +72,7 @@ export default async function BlogPage({
         </div>
       )}
 
-      <Pagination
-        currentPage={page}
-        totalPages={totalPages}
-        basePath="/blog"
-      />
+      <Pagination currentPage={page} totalPages={totalPages} basePath="/blog" />
     </div>
   );
 }

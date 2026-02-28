@@ -8,7 +8,29 @@ const config: Config = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ["Inter", "sans-serif"],
+      },
+      colors: {
+        obsidian: {
+          950: "#050505",
+          900: "#0a0a0a",
+          800: "#121212",
+          700: "#1e1e1e",
+          600: "#2d2d2d",
+        },
+      },
+      animation: {
+        "fade-in-up": "fadeInUp 0.8s ease-out forwards",
+      },
+      keyframes: {
+        fadeInUp: {
+          "0%": { opacity: "0", transform: "translateY(20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+      },
+    },
   },
   plugins: [typography],
 };
