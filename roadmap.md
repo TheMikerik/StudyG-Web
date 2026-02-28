@@ -1,7 +1,7 @@
 # StudyG Blog — Development Roadmap
 
 > Automated AI blog for the StudyG flashcard app.
-> Posts generated daily via OpenAI / Gemini, stored in Supabase, served by Next.js.
+> Posts generated daily via xAI Grok with a self-reflection loop, stored in Supabase, served by Next.js on Cloudflare Pages.
 
 ---
 
@@ -9,19 +9,20 @@
 
 | Layer | Tool |
 |---|---|
-| Framework | Next.js 14+ (App Router) |
+| Framework | Next.js 16+ (App Router) |
 | Styling | Tailwind CSS |
 | Database | Supabase (PostgreSQL) |
-| AI | Vercel AI SDK + OpenAI GPT-4o (or Google Gemini) |
-| Automation | GitHub Actions (daily cron) |
-| Hosting | Vercel |
-| Images | Unsplash API or AI-generated (optional) |
+| AI | xAI Grok API (OpenAI-compatible, `openai` SDK) |
+| Automation | Cloudflare Workers Cron Triggers |
+| Hosting | Cloudflare Pages (via `@opennextjs/cloudflare` adapter) |
+| Analytics | Cloudflare Web Analytics (free, built-in) |
+| Images | Static OG images per category (optional satori for dynamic) |
 
 ---
 
 ## Phase 1 — Project Setup
 
-**Goal:** Working Next.js project connected to Supabase, deployable to Vercel.
+**Goal:** Working Next.js project connected to Supabase, deployable to Cloudflare Pages.
 
 ### Steps
 
@@ -31,10 +32,36 @@
 - [x] 1.4 Install Supabase client — `@supabase/supabase-js` installed
 - [x] 1.5 Add environment variables to `.env.local` (template created)
 - [x] 1.5a Created `src/lib/supabase.ts` (public client + server admin client)
-- [ ] 1.6 Deploy to Vercel (connect GitHub repo), set env vars in Vercel dashboard
-- [ ] 1.7 Verify Vercel build passes
+- [ ] 1.6 Install Cloudflare adapter + Wrangler
+  ```bash
+  npm install -D @opennextjs/cloudflare wrangler
+  ```
+- [ ] 1.7 Add `wrangler.toml` to project root:
+  ```toml
+  name = "studyg-blog"
+  compatibility_date = "2024-12-18"
+  compatibility_flags = ["nodejs_compat"]
+  pages_build_output_dir = ".open-next/assets"
 
-**Deliverable:** Live `https://studyg-blog.vercel.app` (blank page is fine)
+  [vars]
+  # Public vars here — secrets go in Cloudflare dashboard
+  ```
+- [ ] 1.8 Add build script to `package.json`:
+  ```json
+  "build:cf": "opennextjs-cloudflare build"
+  ```
+- [ ] 1.9 Connect GitHub repo to **Cloudflare Pages** (dash.cloudflare.com → Pages → Create project)
+  - Build command: `npm run build:cf`
+  - Output dir: `.open-next/assets`
+  - Add all env vars in Settings → Environment Variables
+- [ ] 1.10 Verify Cloudflare Pages build passes
+
+**Deliverable:** Live `https://studyg-blog.pages.dev` (blank page is fine)
+
+> **Why `@opennextjs/cloudflare`?** Cloudflare has two adapters for Next.js:
+> `@cloudflare/next-on-pages` (restrictive, edge-only) and `@opennextjs/cloudflare`
+> (broader support, Node.js compat flag). The latter handles dynamic routes,
+> API routes, and server components much better.
 
 ---
 
@@ -70,9 +97,9 @@ create policy "Public read" on posts
 
 ### Steps
 
-- [ ] 2.1 Run SQL above in Supabase
-- [ ] 2.2 Create a typed Supabase client helper `src/lib/supabase.ts`
-- [ ] 2.3 Test a manual insert from the Supabase dashboard
+- [x] 2.1 Run SQL above in Supabase
+- [x] 2.2 Create a typed Supabase client helper `src/lib/supabase.ts`
+- [x] 2.3 Test a manual insert from the Supabase dashboard
 
 **Deliverable:** `posts` table with correct RLS policies
 
@@ -110,42 +137,91 @@ create policy "Public read" on posts
 
 ## Phase 4 — AI Post Generation
 
-**Goal:** API route that generates a full blog post and saves it to Supabase.
+**Goal:** API route that generates a high-quality blog post using a self-reflection loop and saves it to Supabase.
 
-### Post generation flow
+### Post generation flow (self-reflection loop)
 
 ```
 Trigger (cron/manual)
-  → choose topic from topic bank
-  → call OpenAI to generate title + content (markdown)
-  → generate slug from title
-  → insert into Supabase posts table (published = true)
+  → pick topic from topic bank
+  → Step 1: generate outline (title, H2 sections, key points)
+  → Step 2: write full article from outline
+  → Step 3: self-evaluate — score SEO, readability, accuracy (returns JSON)
+  → if score < 8/10: rewrite weak sections using critique as context
+  → repeat evaluation up to 3 rounds
+  → insert best version into Supabase (published = true)
+```
+
+Each post uses 3–5 API calls. With Grok this costs fractions of a cent.
+
+### Why this is better than a single call
+
+A single prompt asking an LLM to "write a good article" produces average output.
+Breaking it into outline → write → critique → rewrite mimics how a human editor
+works and measurably improves structure, SEO, and readability without extra infrastructure.
+
+### xAI Grok API setup
+
+Grok's API is OpenAI-compatible — the standard `openai` npm package works by
+pointing it at `https://api.x.ai/v1`. No new SDK needed.
+
+```ts
+import OpenAI from "openai";
+const grok = new OpenAI({
+  apiKey: process.env.XAI_API_KEY,
+  baseURL: "https://api.x.ai/v1",
+});
 ```
 
 ### Steps
 
-- [ ] 4.1 Install Vercel AI SDK + OpenAI
+- [ ] 4.1 Get your xAI API key at console.x.ai → API Keys
+  - Save as `XAI_API_KEY`
+- [ ] 4.2 Install the openai package (also used in Step 4):
   ```bash
-  npm install ai openai
+  npm install openai
   ```
-- [ ] 4.2 Create topic bank `src/lib/topics.ts`
+- [ ] 4.3 Create topic bank `src/lib/topics.ts`
   - ~50 topics relevant to flashcards, studying, memory, learning science
-  - Topics should be shuffled/rotated to avoid repeats
-- [ ] 4.3 Create AI generation function `src/lib/generatePost.ts`
-  - Prompt must specify: word count (800–1200), markdown format, H2 headings, practical tips, CTA mentioning StudyG
-  - Return structured object: `{ title, slug, excerpt, content, category, tags }`
-- [ ] 4.4 Create API route `app/api/generate-post/route.ts` (POST)
+  - Track used topics in Supabase to avoid repeats (add `used_topics` table or a column)
+- [ ] 4.4 Create `src/lib/generatePost.ts` with the self-reflection loop:
+  ```ts
+  // Pseudocode — implement each step as a separate async function
+  async function generatePost(topic: string) {
+    const outline  = await generateOutline(topic);       // Step 1
+    let article    = await writeArticle(outline);        // Step 2
+    let score      = 0;
+    let round      = 0;
+
+    while (score < 8 && round < 3) {
+      const eval   = await evaluateArticle(article);    // Step 3 — returns { score, critique }
+      score        = eval.score;
+      if (score < 8) {
+        article    = await rewriteArticle(article, eval.critique); // Step 4
+      }
+      round++;
+    }
+
+    return buildPostObject(article); // { title, slug, excerpt, content, category, tags }
+  }
+  ```
+  - Step 3 prompt: "Rate this article's SEO (keyword density, headings), readability (sentence length, flow), and accuracy. Return JSON: `{ score: number, critique: string }`"
+  - Step 3 must use structured output or strict JSON mode to parse reliably
+- [ ] 4.5 Create API route `src/app/api/generate-post/route.ts` (POST)
   - Verify `CRON_SECRET` header to prevent unauthorized calls
   - Call `generatePost()`, insert result into Supabase
-  - Return `{ success: true, slug }`
-- [ ] 4.5 Test manually with `curl` or Postman
+  - Return `{ success: true, slug, rounds: number, finalScore: number }`
+- [ ] 4.6 Test manually with `curl` or Postman
   ```bash
-  curl -X POST https://studyg-blog.vercel.app/api/generate-post \
+  curl -X POST https://studyg-blog.pages.dev/api/generate-post \
     -H "x-cron-secret: YOUR_SECRET"
   ```
-- [ ] 4.6 Add error handling + logging (console.error is fine for now)
+- [ ] 4.7 Log `rounds` and `finalScore` to Supabase for monitoring
 
-**Deliverable:** Calling the API route creates a real post visible on the blog
+> **This stays in the same project.** The self-reflection loop is entirely contained
+> inside `generatePost.ts`. The API route, cron, and Supabase schema are unchanged.
+
+**Deliverable:** Calling the API route runs the full loop and creates a polished post
 
 ---
 
@@ -153,17 +229,61 @@ Trigger (cron/manual)
 
 **Goal:** One new post published automatically every day at a fixed time.
 
-### Option A — GitHub Actions (recommended, free)
+### Option A — Cloudflare Workers Cron Trigger (recommended)
 
-- [ ] 5.1 Create `.github/workflows/daily-post.yml`
+A small dedicated Worker that calls the blog's generate-post API route on a schedule.
+
+- [ ] 5.1 Create `workers/daily-post/index.ts`:
+  ```ts
+  export default {
+    async scheduled(_event: ScheduledEvent, env: Env) {
+      const res = await fetch(`${env.BLOG_URL}/api/generate-post`, {
+        method: "POST",
+        headers: { "x-cron-secret": env.CRON_SECRET },
+      });
+      if (!res.ok) {
+        console.error("Post generation failed:", await res.text());
+      }
+    },
+  } satisfies ExportedHandler<Env>;
+
+  interface Env {
+    BLOG_URL: string;
+    CRON_SECRET: string;
+  }
+  ```
+- [ ] 5.2 Create `workers/daily-post/wrangler.toml`:
+  ```toml
+  name = "studyg-daily-post"
+  main = "index.ts"
+  compatibility_date = "2024-12-18"
+
+  [triggers]
+  crons = ["0 8 * * *"]   # Every day at 08:00 UTC
+  ```
+- [ ] 5.3 Add Worker secrets via Wrangler:
+  ```bash
+  wrangler secret put BLOG_URL --config workers/daily-post/wrangler.toml
+  wrangler secret put CRON_SECRET --config workers/daily-post/wrangler.toml
+  ```
+- [ ] 5.4 Deploy Worker:
+  ```bash
+  wrangler deploy --config workers/daily-post/wrangler.toml
+  ```
+- [ ] 5.5 Test by triggering manually from Cloudflare dashboard
+  (Workers → daily-post → Triggers → Send test event)
+
+### Option B — GitHub Actions (simpler fallback)
+
+If you prefer not to manage a separate Worker:
+
+- [ ] Create `.github/workflows/daily-post.yml`
   ```yaml
   name: Daily Post
-
   on:
     schedule:
-      - cron: '0 8 * * *'   # Every day at 08:00 UTC
-    workflow_dispatch:       # Manual trigger from GitHub UI
-
+      - cron: '0 8 * * *'
+    workflow_dispatch:
   jobs:
     generate:
       runs-on: ubuntu-latest
@@ -171,28 +291,10 @@ Trigger (cron/manual)
         - name: Trigger post generation
           run: |
             curl -X POST ${{ secrets.BLOG_URL }}/api/generate-post \
-              -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
-              --fail
+              -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" --fail
   ```
-- [ ] 5.2 Add GitHub repo secrets: `BLOG_URL`, `CRON_SECRET`
-- [ ] 5.3 Test with `workflow_dispatch` (manual trigger)
 
-### Option B — Vercel Cron Jobs (alternative)
-
-- [ ] Add to `vercel.json`:
-  ```json
-  {
-    "crons": [
-      {
-        "path": "/api/generate-post",
-        "schedule": "0 8 * * *"
-      }
-    ]
-  }
-  ```
-  Note: Vercel Cron requires Pro plan for custom schedules.
-
-**Deliverable:** GitHub Actions workflow runs daily, post appears on blog
+**Deliverable:** Post appears on the blog automatically every day at 08:00 UTC
 
 ---
 
@@ -213,8 +315,9 @@ Trigger (cron/manual)
   }
   ```
 - [ ] 6.3 Add Open Graph images
-  - Option A: Static branded image per category
-  - Option B: Dynamic OG image via `app/api/og/route.tsx` (Vercel `@vercel/og`)
+  - Option A: Static branded image per category (recommended for Cloudflare)
+  - Option B: Dynamic OG image via `satori` + `@resvg/resvg-js` in an API route
+    (`@vercel/og` is Vercel-specific and will NOT work on Cloudflare Pages)
 - [ ] 6.4 Improve AI prompt with SEO requirements:
   - First paragraph contains primary keyword
   - Natural keyword density
@@ -232,24 +335,20 @@ Trigger (cron/manual)
 
 ### Steps
 
-- [ ] 7.1 Add Vercel Analytics (zero config)
-  ```bash
-  npm install @vercel/analytics
-  ```
-  Add `<Analytics />` to `app/layout.tsx`
-- [ ] 7.2 Add Google Analytics 4 (optional, more detailed)
-- [ ] 7.3 GitHub Actions failure alert: add email notification on workflow failure
-  ```yaml
-  - name: Notify on failure
-    if: failure()
-    run: echo "::error::Post generation failed!"
-  ```
+- [ ] 7.1 Enable **Cloudflare Web Analytics** (zero config, free, privacy-first)
+  - dash.cloudflare.com → Pages → your project → Web Analytics
+  - Add the one-line script snippet to `app/layout.tsx`
+  - No cookies, no GDPR banner needed
+- [ ] 7.2 Add Google Analytics 4 (optional, more detailed event tracking)
+- [ ] 7.3 Cron failure alert: Worker logs are visible in Cloudflare dashboard
+  - dash.cloudflare.com → Workers → daily-post → Logs
+  - Set up email alerts under Notifications if a Worker errors
 - [ ] 7.4 Add a simple admin page `/admin` (password protected) to:
   - See last 10 generated posts
   - Manually trigger generation
   - See failed attempts
 
-**Deliverable:** Traffic visible in Vercel Analytics, cron failures send alerts
+**Deliverable:** Traffic visible in Cloudflare Web Analytics, cron failures send alerts
 
 ---
 
@@ -260,6 +359,8 @@ Trigger (cron/manual)
 ### Steps
 
 - [ ] 8.1 Custom domain (e.g. `blog.studyg.app`)
+  - Cloudflare Pages → Custom Domains → add domain
+  - Since your domain is already on Cloudflare DNS, this is a one-click setup
 - [ ] 8.2 Favicon and brand colors applied
 - [ ] 8.3 Add newsletter signup (Resend or ConvertKit) — optional
 - [ ] 8.4 Link blog from main StudyG app
@@ -288,12 +389,12 @@ Group posts into categories for better SEO structure:
 
 | Variable | Where | Purpose |
 |---|---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` | Vercel + `.env.local` | Supabase project URL |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Vercel + `.env.local` | Public Supabase key |
-| `SUPABASE_SERVICE_ROLE_KEY` | Vercel only (secret) | Server-side DB writes |
-| `OPENAI_API_KEY` | Vercel only (secret) | AI generation |
-| `CRON_SECRET` | Vercel + GitHub Secrets | Protect cron endpoint |
-| `BLOG_URL` | GitHub Secrets | Full URL for curl in GH Actions |
+| `NEXT_PUBLIC_SUPABASE_URL` | CF Pages + `.env.local` | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | CF Pages + `.env.local` | Public Supabase key |
+| `SUPABASE_SERVICE_ROLE_KEY` | CF Pages (secret) | Server-side DB writes |
+| `XAI_API_KEY` | CF Pages (secret) | Grok API key for post generation |
+| `CRON_SECRET` | CF Pages + Worker secrets | Protect cron endpoint |
+| `BLOG_URL` | Worker secrets | Full URL called by cron Worker |
 
 ---
 
@@ -302,6 +403,7 @@ Group posts into categories for better SEO structure:
 ```
 Phase 1 → Phase 2 → Phase 3 → Phase 4 → Phase 5 → Phase 6 → Phase 7 → Phase 8
 Setup      DB        UI        AI          Cron       SEO       Analytics  Launch
+(CF Pages)          (done)  (Grok loop)  (CF Cron)
 ```
 
 Do **not** skip Phase 3 before Phase 4 — you need the UI to verify that generated
@@ -337,9 +439,10 @@ studyg-blog/
 │       ├── supabase.ts
 │       ├── generatePost.ts
 │       └── topics.ts
-├── .github/
-│   └── workflows/
-│       └── daily-post.yml
+├── workers/
+│   └── daily-post/
+│       ├── index.ts            # Cron Worker
+│       └── wrangler.toml       # Worker config
 ├── .env.local
 └── roadmap.md
 ```
