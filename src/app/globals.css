@@ -6,17 +6,18 @@ body {
   background-color: #050505;
   color: #ffffff;
   -webkit-font-smoothing: antialiased;
+  background-image: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.03) 0%, transparent 60%);
 }
 
-/* Glassmorphism nav — matches original site */
+/* Glassmorphism nav */
 .glass-nav {
-  background: rgba(5, 5, 5, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(5, 5, 5, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* White-to-gray gradient text — matches original .text-gradient */
+/* Premium gradient text */
 .text-gradient {
   background: linear-gradient(to right, #ffffff, #a3a3a3);
   -webkit-background-clip: text;
@@ -24,18 +25,32 @@ body {
   background-clip: text;
 }
 
-/* Subtle card gradient — matches original .card-gradient */
-.card-gradient {
-  background: linear-gradient(145deg, #121212 0%, #0a0a0a 100%);
+.text-gradient-subtle {
+  background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.5) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-/* Glow on hover — matches original .glow-hover */
+/* Subtle card background for luxury feel */
+.card-premium {
+  background: linear-gradient(145deg, rgba(20, 20, 20, 0.9) 0%, rgba(10, 10, 10, 0.9) 100%);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Glow on hover */
 .glow-hover {
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .glow-hover:hover {
-  box-shadow: 0 0 25px rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.08);
   transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Base border transitions */
+.smooth-border {
+  transition: border-color 0.4s ease;
 }
 
 /* Hide scrollbar for category strips */
@@ -47,7 +62,7 @@ body {
   display: none;
 }
 
-/* Styled scrollbar — matches original */
+/* Styled scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -55,9 +70,9 @@ body {
   background: #050505;
 }
 ::-webkit-scrollbar-thumb {
-  background: #333;
+  background: #2a2a2a;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: #4a4a4a;
 }

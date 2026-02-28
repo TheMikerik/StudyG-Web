@@ -6,35 +6,6 @@ export default function Footer() {
   return (
     <footer className="bg-[#050505] pt-20 pb-10 border-t border-white/5">
       <div className="max-w-7xl mx-auto px-6">
-        {/* Big white CTA box — matches original site's footer download section */}
-        <div
-          className="bg-white text-black rounded-3xl p-12 md:p-20 text-center relative overflow-hidden mb-20"
-          id="download"
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-gray-100 to-white" />
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gray-200 rounded-full mix-blend-multiply filter blur-3xl opacity-70" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-gray-300 rounded-full mix-blend-multiply filter blur-3xl opacity-70" />
-          <div className="relative z-10">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
-              Ready to study smarter?
-            </h2>
-            <p className="text-lg text-gray-600 mb-8 max-w-xl mx-auto">
-              Join thousands of students building better habits and learning
-              faster with StudyG.
-            </p>
-            <a
-              href="https://apps.apple.com/app/id6741184646?inviteCode=BFLMPSVZ4"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 bg-black text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-800 transition-transform transform hover:scale-105 shadow-xl"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
-              </svg>
-              Download on App Store
-            </a>
-          </div>
-        </div>
 
         {/* Footer columns */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-16 border-b border-white/5 pb-16">
@@ -52,21 +23,17 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="font-bold mb-4 text-white text-sm">Blog</h4>
+            <h4 className="font-bold mb-4 text-white text-sm">Support</h4>
             <ul className="space-y-2 text-sm text-gray-500">
               <li>
-                <Link href="/blog" className="hover:text-white transition-colors">All Posts</Link>
+                <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
               </li>
-              {CATEGORIES.slice(0, 3).map((cat) => (
-                <li key={cat}>
-                  <Link
-                    href={`/blog/category/${categoryToSlug(cat)}`}
-                    className="hover:text-white transition-colors"
-                  >
-                    {cat}
-                  </Link>
-                </li>
-              ))}
+              <li>
+                <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+              </li>
+              <li>
+                <Link href="/tos" className="hover:text-white transition-colors">Terms of Service</Link>
+              </li>
             </ul>
           </div>
 
@@ -74,12 +41,12 @@ export default function Footer() {
             <h4 className="font-bold mb-4 text-white text-sm">Product</h4>
             <ul className="space-y-2 text-sm text-gray-500">
               <li>
-                <a href="https://studyg.app" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
-                  StudyG App
+                <a href="/flashcards" className="hover:text-white transition-colors">
+                  Flashcard Directory
                 </a>
               </li>
               <li>
-                <a href="https://apps.apple.com/app/id6741184646?inviteCode=BFLMPSVZ4" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                <a href="#download" className="hover:text-white transition-colors">
                   Download
                 </a>
               </li>
@@ -87,7 +54,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="font-bold mb-4 text-white text-sm">Social</h4>
+            <h4 className="font-bold mb-4 text-white text-sm">Socials</h4>
             <div className="flex gap-3">
               <a
                 href="https://discord.gg/6p4nV8Yevg"
@@ -105,12 +72,9 @@ export default function Footer() {
         </div>
 
         <div className="flex flex-col md:flex-row justify-between items-center text-xs text-gray-600 gap-3">
-          <p>© {new Date().getFullYear()} StudyG. All rights reserved.</p>
+          <p>© 2025 StudyG. All rights reserved.</p>
           <div className="flex items-center gap-4">
-            <p>AI-generated content, daily updates.</p>
-            <Link href="/flashcards" className="hover:text-gray-400 transition-colors">
-              Flashcard Directory
-            </Link>
+            <p>Designed with <span className="text-white mx-1">❤️</span> for Focus</p>
           </div>
         </div>
       </div>
