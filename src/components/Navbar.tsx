@@ -17,8 +17,7 @@ export default function Navbar() {
             <span className="text-white font-bold text-sm">S</span>
           </div>
           <span className="font-bold text-xl tracking-tight text-white">
-            StudyG{" "}
-            <span className="text-gray-400 font-normal">Blog</span>
+            StudyG
           </span>
         </Link>
 
@@ -41,6 +40,22 @@ export default function Navbar() {
             }`}
           >
             Blog
+          </Link>
+          <Link
+            href="/about"
+            className={`text-sm font-medium transition-colors ${
+              pathname === "/about" ? "text-white" : "text-gray-400 hover:text-white"
+            }`}
+          >
+            About
+          </Link>
+          <Link
+            href="/contact"
+            className={`text-sm font-medium transition-colors ${
+              pathname === "/contact" ? "text-white" : "text-gray-400 hover:text-white"
+            }`}
+          >
+            Contact
           </Link>
           <a
             href="https://apps.apple.com/app/id6741184646?inviteCode=BFLMPSVZ4"
@@ -81,6 +96,8 @@ export default function Navbar() {
         </button>
         <Link href="/" className="text-2xl font-medium text-white" onClick={() => setMobileOpen(false)}>Home</Link>
         <Link href="/blog" className="text-2xl font-medium text-white" onClick={() => setMobileOpen(false)}>Blog</Link>
+        <Link href="/about" className="text-2xl font-medium text-white" onClick={() => setMobileOpen(false)}>About</Link>
+        <Link href="/contact" className="text-2xl font-medium text-white" onClick={() => setMobileOpen(false)}>Contact</Link>
         <a
           href="https://apps.apple.com/app/id6741184646?inviteCode=BFLMPSVZ4"
           target="_blank"
