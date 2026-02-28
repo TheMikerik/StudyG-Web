@@ -7,10 +7,7 @@ import {
   getRelatedFlashcardPages,
   getAllPublishedSlugs,
 } from "@/lib/silo";
-import Breadcrumb from "@/components/Breadcrumb";
-import FlashcardPreview from "@/components/FlashcardPreview";
-import FAQSection from "@/components/FAQSection";
-import RelatedTopics from "@/components/RelatedTopics";
+import TopicClientPage from "./client-page";
 
 export const revalidate = 86400;
 
@@ -110,53 +107,13 @@ export default async function TopicPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-
-      <div className="max-w-3xl mx-auto px-6 py-20">
-        <Breadcrumb items={breadcrumb} />
-
-        <h1 className="text-3xl md:text-4xl font-bold text-white mb-6 leading-tight">
-          {page.h1}
-        </h1>
-
-        <p className="text-gray-400 leading-relaxed mb-12">{page.intro}</p>
-
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold text-white mb-6">
-            Flashcard Preview
-          </h2>
-          <FlashcardPreview flashcards={page.flashcards} />
-          <p className="mt-4 text-sm text-gray-600">
-            Click any card to reveal the answer.
-          </p>
-        </section>
-
-        {page.faq?.length > 0 && (
-          <div className="mb-12">
-            <FAQSection faqs={page.faq} />
-          </div>
-        )}
-
-        {relatedPages.length > 0 && (
-          <div className="mb-12">
-            <RelatedTopics
-              pages={relatedPages}
-              categorySlug={catSlug}
-              subcategorySlug={subSlug}
-            />
-          </div>
-        )}
-
-        <div className="pt-8 border-t border-white/5">
-          <a
-            href="https://apps.apple.com/app/id6741184646?inviteCode=BFLMPSVZ4"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-white text-black px-6 py-3 rounded-xl font-bold hover:bg-gray-100 transition-all text-sm"
-          >
-            Study these flashcards in StudyG — free →
-          </a>
-        </div>
-      </div>
+      <TopicClientPage
+        page={page}
+        catSlug={catSlug}
+        subSlug={subSlug}
+        relatedPages={relatedPages}
+        breadcrumb={breadcrumb}
+      />
     </>
   );
 }
