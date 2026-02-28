@@ -106,7 +106,12 @@ export default function Footer() {
 
         <div className="flex flex-col md:flex-row justify-between items-center text-xs text-gray-600 gap-3">
           <p>© {new Date().getFullYear()} StudyG. All rights reserved.</p>
-          <p>AI-generated content, daily updates.</p>
+          <div className="flex items-center gap-4">
+            <p>AI-generated content, daily updates.</p>
+            <Link href="/flashcards" className="hover:text-gray-400 transition-colors">
+              Flashcard Directory
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
