@@ -42,3 +42,6 @@ next-env.d.ts
 # blog automation runtime files
 /scripts/generate-post.log
 /scripts/.last-run
+
+# flashcard pages
+/scripts/generate-pages.log

@@ -332,12 +332,12 @@ The prompt (`scripts/generate-pages-prompt.md`) must instruct Claude to:
 ### Steps
 
 - [x] 4.0 Supabase MCP configured in Claude settings (`claude mcp list` shows it)
-- [ ] 4.1 Rewrite `scripts/generate-pages-prompt.md` for the new 3-table schema and quality gate
-- [ ] 4.2 Update `scripts/generate-pages.sh` (rename from `generate-post.sh`)
-- [ ] 4.3 Test manually: `bash scripts/generate-pages.sh --force`
+- [x] 4.1 Rewrite `scripts/generate-pages-prompt.md` for the new 3-table schema and quality gate
+- [x] 4.2 Update `scripts/generate-pages.sh` (rename from `generate-post.sh`)
+- [x] 4.3 Test manually: `bash scripts/generate-pages.sh --force`
   - Check Supabase dashboard — 3 new rows in `flashcard_pages`, all `published = true`
   - Verify each page passes quality gate (5 cards, 150+ word intro, 3+ FAQ)
-- [ ] 4.4 Test that generated pages render correctly in the UI
+- [x] 4.4 Test that generated pages render correctly in the UI
 
 **Deliverable:** Running the script produces 3 quality-gate-passing L3 pages in the DB
 
