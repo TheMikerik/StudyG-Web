@@ -35,3 +35,10 @@ next-env.d.ts
 
 # old web
 /old_web
+
+# cloudflare build output
+/.open-next
+
+# blog automation runtime files
+/scripts/generate-post.log
+/scripts/.last-run

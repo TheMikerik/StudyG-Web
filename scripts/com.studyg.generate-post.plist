@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+
+  <!-- Unique identifier for this LaunchAgent -->
+  <key>Label</key>
+  <string>com.studyg.generate-post</string>
+
+  <!-- Full path to the shell script -->
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/michalrucka/Desktop/Projects/Study G/StudyG-blog/scripts/generate-post.sh</string>
+  </array>
+
+  <!--
+    Run 3 times daily: 09:00, 15:00, 21:00 (morning, afternoon, evening)
+    launchd will fire on the NEXT scheduled time after the Mac wakes from sleep
+    if a scheduled time was missed — unlike cron which drops missed runs.
+  -->
+  <key>StartCalendarInterval</key>
+  <array>
+    <!-- Daily 09:00 (morning) -->
+    <dict>
+      <key>Hour</key><integer>9</integer>
+      <key>Minute</key><integer>0</integer>
+    </dict>
+    <!-- Daily 15:00 (afternoon) -->
+    <dict>
+      <key>Hour</key><integer>15</integer>
+      <key>Minute</key><integer>0</integer>
+    </dict>
+    <!-- Daily 21:00 (evening) -->
+    <dict>
+      <key>Hour</key><integer>21</integer>
+      <key>Minute</key><integer>0</integer>
+    </dict>
+  </array>
+
+  <!-- Write stdout + stderr to log file -->
+  <key>StandardOutPath</key>
+  <string>/Users/michalrucka/Desktop/Projects/Study G/StudyG-blog/scripts/generate-post.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/michalrucka/Desktop/Projects/Study G/StudyG-blog/scripts/generate-post.log</string>
+
+  <!-- Run at login, not just at the scheduled time -->
+  <key>RunAtLoad</key>
+  <false/>
+
+  <!-- Restart on crash (not on clean exit) -->
+  <key>KeepAlive</key>
+  <false/>
+
+</dict>
+</plist>

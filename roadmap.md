@@ -12,8 +12,8 @@
 | Framework | Next.js 16+ (App Router) |
 | Styling | Tailwind CSS |
 | Database | Supabase (PostgreSQL) |
-| AI | xAI Grok API (OpenAI-compatible, `openai` SDK) |
-| Automation | Cloudflare Workers Cron Triggers |
+| AI | Claude Pro (Claude Code CLI, no API cost) |
+| Automation | macOS LaunchAgent (launchd, runs locally) |
 | Hosting | Cloudflare Pages (via `@opennextjs/cloudflare` adapter) |
 | Analytics | Cloudflare Web Analytics (free, built-in) |
 | Images | Static OG images per category (optional satori for dynamic) |
@@ -32,29 +32,15 @@
 - [x] 1.4 Install Supabase client — `@supabase/supabase-js` installed
 - [x] 1.5 Add environment variables to `.env.local` (template created)
 - [x] 1.5a Created `src/lib/supabase.ts` (public client + server admin client)
-- [ ] 1.6 Install Cloudflare adapter + Wrangler
-  ```bash
-  npm install -D @opennextjs/cloudflare wrangler
-  ```
-- [ ] 1.7 Add `wrangler.toml` to project root:
-  ```toml
-  name = "studyg-blog"
-  compatibility_date = "2024-12-18"
-  compatibility_flags = ["nodejs_compat"]
-  pages_build_output_dir = ".open-next/assets"
-
-  [vars]
-  # Public vars here — secrets go in Cloudflare dashboard
-  ```
-- [ ] 1.8 Add build script to `package.json`:
-  ```json
-  "build:cf": "opennextjs-cloudflare build"
-  ```
+- [x] 1.6 Install Cloudflare adapter + Wrangler (`@opennextjs/cloudflare` v1.17.1, `wrangler` v4.69.0)
+- [x] 1.7 Created `wrangler.toml` (nodejs_compat flag, pages_build_output_dir)
+- [x] 1.8 Added `build:cf` and `preview` scripts to `package.json`; created `open-next.config.ts`
+- [x] 1.8a Verified Cloudflare build passes locally (`npm run build:cf` → "OpenNext build complete")
 - [ ] 1.9 Connect GitHub repo to **Cloudflare Pages** (dash.cloudflare.com → Pages → Create project)
   - Build command: `npm run build:cf`
   - Output dir: `.open-next/assets`
   - Add all env vars in Settings → Environment Variables
-- [ ] 1.10 Verify Cloudflare Pages build passes
+- [ ] 1.10 Verify Cloudflare Pages build passes (automatic after 1.9)
 
 **Deliverable:** Live `https://studyg-blog.pages.dev` (blank page is fine)
 
@@ -135,166 +121,103 @@ create policy "Public read" on posts
 
 ---
 
-## Phase 4 — AI Post Generation
+## Phase 4 — AI Post Generation (Local, Claude Pro + MCP)
 
-**Goal:** API route that generates a high-quality blog post using a self-reflection loop and saves it to Supabase.
+**Goal:** Claude Code CLI generates a high-quality post via self-reflection loop and inserts it directly into Supabase using the MCP server. No external API costs.
 
-### Post generation flow (self-reflection loop)
+### How it works
 
 ```
-Trigger (cron/manual)
-  → pick topic from topic bank
-  → Step 1: generate outline (title, H2 sections, key points)
-  → Step 2: write full article from outline
-  → Step 3: self-evaluate — score SEO, readability, accuracy (returns JSON)
-  → if score < 8/10: rewrite weak sections using critique as context
-  → repeat evaluation up to 3 rounds
-  → insert best version into Supabase (published = true)
+launchd (every 3 days)
+  → runs scripts/generate-post.sh
+  → script calls: claude -p "$(cat scripts/generate-post-prompt.md)"
+  → Claude (Pro) executes the reflection loop internally:
+      Step 1: pick unused topic from topics list
+      Step 2: generate article outline
+      Step 3: write full article from outline
+      Step 4: self-evaluate (SEO score, readability, accuracy)
+      Step 5: if score < 8, rewrite weak sections and re-evaluate
+      Step 6: repeat up to 3 rounds
+  → Claude uses Supabase MCP to INSERT final post directly into posts table
+  → script stamps last-run timestamp to prevent duplicate runs
 ```
 
-Each post uses 3–5 API calls. With Grok this costs fractions of a cent.
-
-### Why this is better than a single call
-
-A single prompt asking an LLM to "write a good article" produces average output.
-Breaking it into outline → write → critique → rewrite mimics how a human editor
-works and measurably improves structure, SEO, and readability without extra infrastructure.
-
-### xAI Grok API setup
-
-Grok's API is OpenAI-compatible — the standard `openai` npm package works by
-pointing it at `https://api.x.ai/v1`. No new SDK needed.
-
-```ts
-import OpenAI from "openai";
-const grok = new OpenAI({
-  apiKey: process.env.XAI_API_KEY,
-  baseURL: "https://api.x.ai/v1",
-});
-```
+No API keys in the Next.js app. No API route needed for generation.
+Claude Pro subscription covers all generation costs.
 
 ### Steps
 
-- [ ] 4.1 Get your xAI API key at console.x.ai → API Keys
-  - Save as `XAI_API_KEY`
-- [ ] 4.2 Install the openai package (also used in Step 4):
+- [x] 4.0 Created `scripts/generate-post-prompt.md` — the full prompt Claude receives
+- [x] 4.0a Created `scripts/generate-post.sh` — wrapper script (timestamp guard + CLI call)
+- [x] 4.1 Configure Supabase MCP server in Claude settings:
   ```bash
-  npm install openai
-  ```
-- [ ] 4.3 Create topic bank `src/lib/topics.ts`
-  - ~50 topics relevant to flashcards, studying, memory, learning science
-  - Track used topics in Supabase to avoid repeats (add `used_topics` table or a column)
-- [ ] 4.4 Create `src/lib/generatePost.ts` with the self-reflection loop:
-  ```ts
-  // Pseudocode — implement each step as a separate async function
-  async function generatePost(topic: string) {
-    const outline  = await generateOutline(topic);       // Step 1
-    let article    = await writeArticle(outline);        // Step 2
-    let score      = 0;
-    let round      = 0;
-
-    while (score < 8 && round < 3) {
-      const eval   = await evaluateArticle(article);    // Step 3 — returns { score, critique }
-      score        = eval.score;
-      if (score < 8) {
-        article    = await rewriteArticle(article, eval.critique); // Step 4
+  # Add to ~/.claude/settings.json under "mcpServers":
+  {
+    "mcpServers": {
+      "supabase": {
+        "command": "npx",
+        "args": ["-y", "@supabase/mcp-server-supabase@latest",
+                 "--supabase-url", "YOUR_SUPABASE_URL",
+                 "--supabase-key", "YOUR_SERVICE_ROLE_KEY"]
       }
-      round++;
     }
-
-    return buildPostObject(article); // { title, slug, excerpt, content, category, tags }
   }
   ```
-  - Step 3 prompt: "Rate this article's SEO (keyword density, headings), readability (sentence length, flow), and accuracy. Return JSON: `{ score: number, critique: string }`"
-  - Step 3 must use structured output or strict JSON mode to parse reliably
-- [ ] 4.5 Create API route `src/app/api/generate-post/route.ts` (POST)
-  - Verify `CRON_SECRET` header to prevent unauthorized calls
-  - Call `generatePost()`, insert result into Supabase
-  - Return `{ success: true, slug, rounds: number, finalScore: number }`
-- [ ] 4.6 Test manually with `curl` or Postman
+  Verify with: `claude mcp list`
+- [x] 4.2 Test generation manually:
   ```bash
-  curl -X POST https://studyg-blog.pages.dev/api/generate-post \
-    -H "x-cron-secret: YOUR_SECRET"
+  bash scripts/generate-post.sh --force
   ```
-- [ ] 4.7 Log `rounds` and `finalScore` to Supabase for monitoring
+  Check Supabase dashboard — new row should appear in `posts` table.
+- [ ] 4.3 Create the `used_topics` column in Supabase to avoid repeats:
+  ```sql
+  alter table posts add column if not exists topic text;
+  ```
+  The prompt queries existing topics to skip already-covered ones.
 
-> **This stays in the same project.** The self-reflection loop is entirely contained
-> inside `generatePost.ts`. The API route, cron, and Supabase schema are unchanged.
-
-**Deliverable:** Calling the API route runs the full loop and creates a polished post
+**Deliverable:** Running the script manually produces a published post in the DB
 
 ---
 
-## Phase 5 — Automation (Daily Cron)
+## Phase 5 — Automation (macOS LaunchAgent)
 
-**Goal:** One new post published automatically every day at a fixed time.
+**Goal:** MacBook runs the generation script every 3 days automatically, including after waking from sleep.
 
-### Option A — Cloudflare Workers Cron Trigger (recommended)
+### Why launchd over cron
 
-A small dedicated Worker that calls the blog's generate-post API route on a schedule.
+- launchd runs `StartCalendarInterval` jobs that were missed while the Mac slept
+- More reliable than `cron` which silently skips missed runs
+- Native macOS — no extra tools
 
-- [ ] 5.1 Create `workers/daily-post/index.ts`:
-  ```ts
-  export default {
-    async scheduled(_event: ScheduledEvent, env: Env) {
-      const res = await fetch(`${env.BLOG_URL}/api/generate-post`, {
-        method: "POST",
-        headers: { "x-cron-secret": env.CRON_SECRET },
-      });
-      if (!res.ok) {
-        console.error("Post generation failed:", await res.text());
-      }
-    },
-  } satisfies ExportedHandler<Env>;
+### Steps
 
-  interface Env {
-    BLOG_URL: string;
-    CRON_SECRET: string;
-  }
-  ```
-- [ ] 5.2 Create `workers/daily-post/wrangler.toml`:
-  ```toml
-  name = "studyg-daily-post"
-  main = "index.ts"
-  compatibility_date = "2024-12-18"
-
-  [triggers]
-  crons = ["0 8 * * *"]   # Every day at 08:00 UTC
-  ```
-- [ ] 5.3 Add Worker secrets via Wrangler:
+- [x] 5.0 Created `scripts/com.studyg.generate-post.plist` — the LaunchAgent definition
+- [x] 5.1 Install the LaunchAgent:
   ```bash
-  wrangler secret put BLOG_URL --config workers/daily-post/wrangler.toml
-  wrangler secret put CRON_SECRET --config workers/daily-post/wrangler.toml
+  cp scripts/com.studyg.generate-post.plist ~/Library/LaunchAgents/
+  launchctl load ~/Library/LaunchAgents/com.studyg.generate-post.plist
   ```
-- [ ] 5.4 Deploy Worker:
+- [x] 5.2 Verify it loaded:
   ```bash
-  wrangler deploy --config workers/daily-post/wrangler.toml
+  launchctl list | grep studyg
   ```
-- [ ] 5.5 Test by triggering manually from Cloudflare dashboard
-  (Workers → daily-post → Triggers → Send test event)
-
-### Option B — GitHub Actions (simpler fallback)
-
-If you prefer not to manage a separate Worker:
-
-- [ ] Create `.github/workflows/daily-post.yml`
-  ```yaml
-  name: Daily Post
-  on:
-    schedule:
-      - cron: '0 8 * * *'
-    workflow_dispatch:
-  jobs:
-    generate:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Trigger post generation
-          run: |
-            curl -X POST ${{ secrets.BLOG_URL }}/api/generate-post \
-              -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" --fail
+- [x] 5.3 Test a manual trigger:
+  ```bash
+  launchctl start com.studyg.generate-post
+  ```
+  Check `scripts/generate-post.log` for output.
+- [x] 5.4 To update the schedule or prompt — unload, edit, reload:
+  ```bash
+  launchctl unload ~/Library/LaunchAgents/com.studyg.generate-post.plist
+  # edit plist or prompt
+  launchctl load ~/Library/LaunchAgents/com.studyg.generate-post.plist
   ```
 
-**Deliverable:** Post appears on the blog automatically every day at 08:00 UTC
+> **Missed runs:** The plist uses `StartCalendarInterval` (not `StartInterval`).
+> launchd will run the job on next wake if the scheduled time was missed during sleep.
+> The shell script adds a 3-day timestamp guard so it never generates twice in one window.
+
+**Deliverable:** MacBook auto-generates a post every 3 days with no manual action
 
 ---
 
@@ -392,9 +315,7 @@ Group posts into categories for better SEO structure:
 | `NEXT_PUBLIC_SUPABASE_URL` | CF Pages + `.env.local` | Supabase project URL |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | CF Pages + `.env.local` | Public Supabase key |
 | `SUPABASE_SERVICE_ROLE_KEY` | CF Pages (secret) | Server-side DB writes |
-| `XAI_API_KEY` | CF Pages (secret) | Grok API key for post generation |
-| `CRON_SECRET` | CF Pages + Worker secrets | Protect cron endpoint |
-| `BLOG_URL` | Worker secrets | Full URL called by cron Worker |
+| `SUPABASE_URL` + `SERVICE_ROLE_KEY` | `~/.claude/settings.json` (MCP config) | Claude MCP connects to Supabase |
 
 ---
 
@@ -403,7 +324,7 @@ Group posts into categories for better SEO structure:
 ```
 Phase 1 → Phase 2 → Phase 3 → Phase 4 → Phase 5 → Phase 6 → Phase 7 → Phase 8
 Setup      DB        UI        AI          Cron       SEO       Analytics  Launch
-(CF Pages)          (done)  (Grok loop)  (CF Cron)
+(CF Pages)          (done)  (Claude+MCP) (launchd)
 ```
 
 Do **not** skip Phase 3 before Phase 4 — you need the UI to verify that generated
@@ -439,10 +360,11 @@ studyg-blog/
 │       ├── supabase.ts
 │       ├── generatePost.ts
 │       └── topics.ts
-├── workers/
-│   └── daily-post/
-│       ├── index.ts            # Cron Worker
-│       └── wrangler.toml       # Worker config
+├── scripts/
+│   ├── generate-post-prompt.md     # Full prompt sent to Claude CLI
+│   ├── generate-post.sh            # Wrapper: timestamp guard + claude -p call
+│   ├── generate-post.log           # Runtime log (git-ignored)
+│   └── com.studyg.generate-post.plist  # LaunchAgent (copy to ~/Library/LaunchAgents/)
 ├── .env.local
 └── roadmap.md
 ```
