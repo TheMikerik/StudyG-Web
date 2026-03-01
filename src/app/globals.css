@@ -3,30 +3,30 @@
 @tailwind utilities;
 
 body {
-  background-color: #050505;
-  color: #ffffff;
+  background-color: #ffffff;
+  color: #000000;
   -webkit-font-smoothing: antialiased;
-  background-image: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.03) 0%, transparent 60%);
+  background-image: radial-gradient(circle at 50% 0%, rgba(0, 0, 0, 0.03) 0%, transparent 60%);
 }
 
 /* Glassmorphism nav */
 .glass-nav {
-  background: rgba(5, 5, 5, 0.6);
+  background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 /* Premium gradient text */
 .text-gradient {
-  background: linear-gradient(to right, #ffffff, #a3a3a3);
+  background: linear-gradient(to right, #000000, #525252);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .text-gradient-subtle {
-  background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.5) 100%);
+  background: linear-gradient(180deg, #000000 0%, rgba(0, 0, 0, 0.5) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -34,8 +34,8 @@ body {
 
 /* Subtle card background for luxury feel */
 .card-premium {
-  background: linear-gradient(145deg, rgba(20, 20, 20, 0.9) 0%, rgba(10, 10, 10, 0.9) 100%);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+  background: linear-gradient(145deg, #ffffff 0%, #fafafa 100%);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03), inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
 }
 
 /* Glow on hover */
@@ -43,9 +43,9 @@ body {
   transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .glow-hover:hover {
-  box-shadow: 0 0 30px rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(0, 0, 0, 0.1);
 }
 
 /* Base border transitions */
@@ -67,12 +67,12 @@ body {
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #050505;
+  background: #ffffff;
 }
 ::-webkit-scrollbar-thumb {
-  background: #2a2a2a;
+  background: #e5e5e5;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #4a4a4a;
+  background: #c2c2c2;
 }

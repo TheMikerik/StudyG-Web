@@ -48,19 +48,19 @@ export default async function CategoryPage({ params, searchParams }: Props) {
         <div className="mb-3">
           <CategoryBadge category={categoryName} />
         </div>
-        <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">
+        <h1 className="text-4xl md:text-5xl font-bold text-black mb-2">
           {categoryName}
         </h1>
-        <p className="text-gray-400">
+        <p className="text-gray-600">
           {total} article{total !== 1 ? "s" : ""}
         </p>
       </div>
 
       {/* Category tabs */}
-      <div className="flex gap-2 overflow-x-auto scrollbar-none mb-10 pb-1 border-b border-white/5">
+      <div className="flex gap-2 overflow-x-auto scrollbar-none mb-10 pb-1 border-b border-black/5">
         <Link
           href="/blog"
-          className="shrink-0 px-4 py-2 rounded-full text-sm font-medium border border-white/10 text-gray-400 hover:border-white/30 hover:text-white transition-all"
+          className="shrink-0 px-4 py-2 rounded-full text-sm font-medium border border-black/10 text-gray-600 hover:border-black/30 hover:text-black transition-all"
         >
           All
         </Link>
@@ -68,11 +68,10 @@ export default async function CategoryPage({ params, searchParams }: Props) {
           <Link
             key={c}
             href={`/blog/category/${categoryToSlug(c)}`}
-            className={`shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all ${
-              c === categoryName
-                ? "bg-white text-black font-bold"
-                : "border border-white/10 text-gray-400 hover:border-white/30 hover:text-white"
-            }`}
+            className={`shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all ${c === categoryName
+                ? "bg-black text-white font-bold"
+                : "border border-black/10 text-gray-600 hover:border-black/30 hover:text-black"
+              }`}
           >
             {c}
           </Link>

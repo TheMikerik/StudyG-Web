@@ -23,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.className} min-h-screen flex flex-col bg-[#050505] text-white antialiased`}
+        className={`${inter.className} min-h-screen flex flex-col bg-white text-black antialiased`}
       >
         <Navbar />
         <main className="flex-1">{children}</main>

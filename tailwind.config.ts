@@ -20,6 +20,9 @@ const config: Config = {
           700: "#1e1e1e",
           600: "#2d2d2d",
         },
+        gold: {
+          accent: "#f5ce8c",
+        },
       },
       animation: {
         "fade-in-up": "fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards",

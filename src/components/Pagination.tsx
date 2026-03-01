@@ -20,7 +20,7 @@ export default function Pagination({
       {currentPage > 1 && (
         <Link
           href={`${basePath}?page=${currentPage - 1}`}
-          className="px-4 py-2 rounded-lg border border-white/10 text-sm text-gray-400 hover:border-white/30 hover:text-white transition-all"
+          className="px-4 py-2 rounded-lg border border-black/10 text-sm text-gray-500 hover:border-black/30 hover:text-black transition-all"
         >
           ← Prev
         </Link>
@@ -30,11 +30,10 @@ export default function Pagination({
         <Link
           key={page}
           href={`${basePath}?page=${page}`}
-          className={`w-9 h-9 flex items-center justify-center rounded-lg text-sm font-medium transition-all ${
-            page === currentPage
-              ? "bg-white text-black font-bold"
-              : "border border-white/10 text-gray-400 hover:border-white/30 hover:text-white"
-          }`}
+          className={`w-9 h-9 flex items-center justify-center rounded-lg text-sm font-medium transition-all ${page === currentPage
+              ? "bg-black text-white font-bold"
+              : "border border-black/10 text-gray-500 hover:border-black/30 hover:text-black"
+            }`}
         >
           {page}
         </Link>
@@ -43,7 +42,7 @@ export default function Pagination({
       {currentPage < totalPages && (
         <Link
           href={`${basePath}?page=${currentPage + 1}`}
-          className="px-4 py-2 rounded-lg border border-white/10 text-sm text-gray-400 hover:border-white/30 hover:text-white transition-all"
+          className="px-4 py-2 rounded-lg border border-black/10 text-sm text-gray-500 hover:border-black/30 hover:text-black transition-all"
         >
           Next →
         </Link>

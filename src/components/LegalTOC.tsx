@@ -40,11 +40,10 @@ export default function LegalTOC({ items }: { items: TOCItem[] }) {
           <a
             key={item.href}
             href={item.href}
-            className={`text-sm border-l-2 py-2 transition-all ${
-              isActive
-                ? "text-white border-white pl-5"
-                : "text-gray-500 border-transparent pl-4 hover:text-white"
-            }`}
+            className={`text-sm border-l-2 py-2 transition-all ${isActive
+                ? "text-black border-black pl-5"
+                : "text-gray-500 border-transparent pl-4 hover:text-black"
+              }`}
           >
             {item.label}
           </a>
